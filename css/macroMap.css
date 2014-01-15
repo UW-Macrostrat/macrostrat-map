@@ -1,0 +1,55 @@
+body, html {
+  font-family: Helvetica, sans-serif;
+}
+#wrapper {
+  position: absolute;
+  width: 960px;
+  height: 600px;
+  top: 10px;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+.land {
+  fill: #eee;
+  stroke: #ddd;
+}
+.legendText {
+  font-weight: 100;
+  fill:#777;
+  stroke:none;
+}
+#info {
+  font-size:1.3em;
+  fill:#777;
+  stroke:none;
+}
+#infoYear {
+  font-weight: 100;
+  font-size:1em;
+  fill:#aaa;
+  stroke:none;
+}
+#start {
+  font-weight: 100;
+  position: absolute;
+  top: 550px;
+  left: 145px;
+  display: none;
+}
+#geoTime {
+  width:960px;
+}
+.fossil {
+  stroke:none;
+  fill:#000;
+}
+#map {
+  display: none;
+}
+#waiting {
+  color: #777;
+  position: absolute;
+  top: 30%;
+  left: 40%;
+}
