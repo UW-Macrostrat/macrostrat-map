@@ -79,7 +79,7 @@ var macroMap = (function() {
         {"metamorphic": "#7B4036"}
       ];
 
-      d3.json("na.json", function(err, countries) {
+      d3.json("js/na.json", function(err, countries) {
         var boundaries = topojson.feature(countries, countries.objects.na);
 
         svg.selectAll(".countries")
