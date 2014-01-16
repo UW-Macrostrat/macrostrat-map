@@ -4,13 +4,65 @@ d3.selection.prototype.moveToFront = function() {
   return this.each(function(){
     this.parentNode.appendChild(this);
   });
-};
+}
+
+d3.selection.prototype.dblTap = function(callback) {
+  var last = 0;
+  return this.each(function() {
+    d3.select(this).on("touchstart", function(e) {
+        if ((d3.event.timeStamp - last) < 2000) {
+          return callback(e);
+        }
+        last = d3.event.timeStamp;
+    });
+  });
+}
 
 var timeScale = (function() {
   var data = { oid: 0, col: "#000000", nam: "Geologic Time", children: [] },
       interval_hash = { 0: data },
       level5 = [],
       level5Names = [];
+
+  /* Distinguish between clicks and doubleclicks via 
+     https://gist.github.com/tmcw/4067674 */
+  function clickcancel() {
+    var event = d3.dispatch('click', 'dblclick');
+    function cc(selection) {
+        var down,
+            tolerance = 5,
+            last,
+            wait = null;
+        // euclidean distance
+        function dist(a, b) {
+            return Math.sqrt(Math.pow(a[0] - b[0], 2), Math.pow(a[1] - b[1], 2));
+        }
+
+        selection.on('mousedown', function(d) {
+            down = d3.mouse(document.body);
+            last = +new Date();
+        });
+        selection.on('mouseup', function(d) {
+            if (dist(down, d3.mouse(document.body)) > tolerance) {
+                return;
+            } else {
+                if (wait) {
+                    window.clearTimeout(wait);
+                    wait = null;
+                    event.dblclick(d3.event);
+                } else {
+                    wait = window.setTimeout((function(e) {
+                        return function() {
+                            event.click(e);
+                            wait = null;
+                        };
+                    })(d3.event), 300);
+                }
+            }
+        });
+    };
+    return d3.rebind(cc, event, 'on');
+  }
 
   return {
     "init": function(div) {
@@ -55,7 +107,6 @@ var timeScale = (function() {
         .attr("transform", "translate(0,98)");
       // Load the time scale data
       d3.json("http://paleobiodb.org/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
-
         for(var i=0; i < result.records.length; i++) {
           var r = result.records[i];
           r.children = [];
@@ -79,6 +130,8 @@ var timeScale = (function() {
             .sort(function(d) { d3.ascending(d); })
             .value(function(d) { return d.total; });
 
+        var ccRect = clickcancel();
+
         // Create the rectangles
         time.selectAll(".rect")
             .data(partition.nodes(data))
@@ -92,26 +145,22 @@ var timeScale = (function() {
             .attr("class", "scaleRect")
             .style("opacity", 0.83)
             .call(drag)
-            .on("mouseover", function(d) {
-              timeScale.highlight(d.oid);
-            })
-            .on("mouseout", function(){
-              timeScale.unhighlight();
-            })
-            .on("click", function(d) {
-              var index = d.oid;
-
-              var name = d.nam;
-                  name = d.nam.split(' ').join('_');
-
-              if (name != "Geologic_Time") {
-                macroMap.changeYear(index, name);
-              }
-            })
-            .on("dblclick", function(d) {
-              if (d3.event.defaultPrevented) return;
-              timeScale.goTo(d);
+            .call(ccRect)
+            .dblTap(function(d) {
+              setTimeout(timeScale.goTo(d), 500);
             });
+          ccRect.on("dblclick", function(d) {
+            if (d3.event.defaultPrevented) return;
+            timeScale.goTo(d.target.__data__);
+          });
+          ccRect.on("click", function(d) {
+            var name = d.target.__data__.nam;
+                name = name.split(' ').join('_');
+
+            if (name != "Geologic_Time") {
+              macroMap.changeYear(d.target.__data__.oid, name);
+            }
+          });
 
         var scaleBar = scale.selectAll(".rect")
             .data(partition.nodes(data));
@@ -157,6 +206,8 @@ var timeScale = (function() {
           .style("fill", "#777")
           .text("0");
 
+        var ccFull = clickcancel();
+
         // Add the full labels
         time.selectAll("fullName")
             .data(partition.nodes(data))
@@ -170,21 +221,24 @@ var timeScale = (function() {
             .attr("id", function(d) { return "l" + d.oid; })
             .attr("x", function(d) { return timeScale.labelX(d); })
             .call(drag)
-            .on("click", function(d) {
-              var index = d.oid;
-
-              var name = d.nam;
-                  name = d.nam.split(' ').join('_');
-
-              if (name != "Geologic_Time") {
-                macroMap.changeYear(index, name);
-              }
-            })
-            .on("dblclick", function(d) {
-              if (d3.event.defaultPrevented) return;
-              timeScale.goTo(d);
+            .call(ccFull)
+            .dblTap(function(d) {
+              setTimeout(timeScale.goTo(d), 500);
             });
 
+          ccFull.on("dblclick", function(d) {
+            timeScale.goTo(d.target.__data__);
+          });
+          ccFull.on("click", function(d) {
+            var name = d.target.__data__.nam;
+                name = name.split(' ').join('_');
+
+            if (name != "Geologic_Time") {
+              macroMap.changeYear(d.target.__data__.oid, name);
+            }
+          });
+
+        var ccAbbr = clickcancel();
         // Add the abbreviations
         time.selectAll("abbrevs")
             .data(partition.nodes(data))
@@ -197,20 +251,22 @@ var timeScale = (function() {
             .attr("class", function(d) { return "abbr level" + d.lvl; })
             .attr("id", function(d) { return "a" + d.oid; })
             .attr("x", function(d) { return timeScale.labelAbbrX(d); })
-            .on("click", function(d) {
-              var index = d.oid;
-
-              var name = d.nam;
-                  name = d.nam.split(' ').join('_');
-
-              if (name != "Geologic_Time") {
-                macroMap.changeYear(index, name);
-              }
-            })
-            .on("dblclick", function(d) {
-              if (d3.event.defaultPrevented) return;
-              timeScale.goTo(d);
+            .call(ccAbbr)
+            .dblTap(function(d) {
+              setTimeout(timeScale.goTo(d), 500);
             });
+
+          ccAbbr.on("dblclick", function(d) {
+            timeScale.goTo(d.target.__data__);
+          });
+          ccAbbr.on("click", function(d) {
+            var name = d.target.__data__.nam;
+                name = name.split(' ').join('_');
+
+            if (name != "Geologic_Time") {
+              macroMap.changeYear(d.target.__data__.oid, name);
+            }
+          });
 
         // Position the labels for the first time
         timeScale.goTo(interval_hash[0]);
