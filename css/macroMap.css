@@ -15,9 +15,12 @@ body, html {
   stroke: #ddd;
 }
 .legendText {
-  font-weight: 100;
+  font-weight: 200;
   fill:#777;
   stroke:none;
+}
+.mapInfo {
+  position: absolute;
 }
 #info {
   font-size:1.3em;
@@ -30,13 +33,7 @@ body, html {
   fill:#aaa;
   stroke:none;
 }
-#start {
-  font-weight: 100;
-  position: absolute;
-  top: 550px;
-  left: 145px;
-  display: none;
-}
+
 #geoTime {
   width:960px;
 }
@@ -52,4 +49,62 @@ body, html {
   position: absolute;
   top: 30%;
   left: 40%;
+}
+.strat:hover {
+  stroke-width:1px;
+  stroke:#fff;
+}
+
+.feature {
+  fill: #ccc;
+  cursor: pointer;
+}
+
+.feature.active {
+  fill: orange;
+}
+
+.mesh {
+  fill: none;
+  stroke: #ddd;
+  stroke-width: .25px;
+  stroke-linejoin: round;
+  display: none;
+}
+
+.graticule {
+  fill: none;
+  stroke: #777;
+  stroke-width: 0.3px;
+  stroke-opacity: .4;
+}
+
+.controls {
+  color: #777;
+  position: absolute;
+  top: 550px;
+  left: 145px;
+  display: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.controls > i {
+  padding: 8px;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#stop {
+  display: none;
+}
+.disabled {
+  color: #eee;
 }

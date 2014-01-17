@@ -82,7 +82,7 @@ function getJSON() {
               } else {
                   console.log("The file for year ", intervals[i], "was saved");
                   // Convert to Topojson
-                  exec('topojson -o macro/macro_' + filename +'.json -p lith_type,p -- tempjson/macro_' + filename + '.json', function(err, result) {
+                  exec('topojson -o macro/macro_' + filename +'.json -p col_id,lith_type,p -- tempjson/macro_' + filename + '.json', function(err, result) {
                     if (err) {
                       console.log(err);
                     } else {

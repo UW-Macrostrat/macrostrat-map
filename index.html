@@ -3,12 +3,18 @@
 <meta charset="utf-8">
   <link rel="stylesheet" href="css/macroMap.css">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
   <link rel="stylesheet" href="css/timescale.css">
 </head>
 <body>
   <div id="waiting"><h2>Loading data...</h2><p>Please be patient. It may take a while.</p></div>
   <div id="wrapper">
-    <button type="submit" id="start" class="btn btn-success">Start animation</button>
+    <div class="controls">
+      <i class="fa fa-backward fa-lg disabled" id="backward"></i>
+      <i class="fa fa-play fa-2x" id="play"></i>
+      <i class="fa fa-pause fa-2x" id="stop"></i>
+      <i class="fa fa-forward fa-lg" id="forward"></i>
+    </div>
     <div id="map"></div>
     <div id="geoTime"></div>
   </div>

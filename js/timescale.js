@@ -154,8 +154,17 @@ var timeScale = (function() {
             timeScale.goTo(d.target.__data__);
           });
           ccRect.on("click", function(d) {
+            if (d.target.__data__.lvl === 5) {
+              timeScale.level5.forEach(function(j, i) {
+                if (j.oid === d.target.__data__.oid) {
+                  return macroMap.currentInterval = i;
+                }
+              });
+            }
             var name = d.target.__data__.nam;
                 name = name.split(' ').join('_');
+
+            timeScale.highlight(d.target.__data__.nam);
 
             if (name != "Geologic_Time") {
               macroMap.changeYear(d.target.__data__.oid, name);
@@ -230,8 +239,17 @@ var timeScale = (function() {
             timeScale.goTo(d.target.__data__);
           });
           ccFull.on("click", function(d) {
+            if (d.target.__data__.lvl === 5) {
+              timeScale.level5.forEach(function(j, i) {
+                if (j.oid === d.target.__data__.oid) {
+                  return macroMap.currentInterval = i;
+                }
+              });
+            }
             var name = d.target.__data__.nam;
                 name = name.split(' ').join('_');
+
+            timeScale.highlight(d.target.__data__.nam);
 
             if (name != "Geologic_Time") {
               macroMap.changeYear(d.target.__data__.oid, name);
@@ -260,8 +278,17 @@ var timeScale = (function() {
             timeScale.goTo(d.target.__data__);
           });
           ccAbbr.on("click", function(d) {
+            if (d.target.__data__.lvl === 5) {
+              timeScale.level5.forEach(function(j, i) {
+                if (j.oid === d.target.__data__.oid) {
+                  return macroMap.currentInterval = i;
+                }
+              });
+            }
             var name = d.target.__data__.nam;
                 name = name.split(' ').join('_');
+
+            timeScale.highlight(d.target.__data__.nam);
 
             if (name != "Geologic_Time") {
               macroMap.changeYear(d.target.__data__.oid, name);
